@@ -56,25 +56,19 @@ public class Grafo {
         matriz[a.getN1()][a.getN2()] = a.getDistancia();
         matriz[a.getN2()][a.getN1()] = a.getDistancia();
     }
-
     public ArrayList<Integer> getVecinos(int n) {
-        ArrayList<Integer> a = new ArrayList<Integer>();
+    ArrayList<Integer> a = new ArrayList<Integer>();
 
-        //Inicio for
-        for (int i = 0; i < matriz.length; i++) {
-
-            //Declaracción de condicional
-            if (matriz[n][i] != Integer.MAX_VALUE) {
-                a.add(i);
-            }
-
-            //Retorna el valor nuevo valor de a;
-            return a;
+    for (int i = 0; i < matriz.length; i++) {
+        if (matriz[n][i] != Integer.MAX_VALUE) {
+            a.add(i);
         }
-
-        return a;
     }
 
+    return a;
+}
+
+   
     public static void main(String[] args) {
         JFrame ventana = new JFrame("Grafo");
         ventana.add(new Lienzo());
