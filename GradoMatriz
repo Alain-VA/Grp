@@ -1,0 +1,145 @@
+/**
+ * Implementación de un grafo valorado mediante matriz de adyacencia.
+ * Soporta grafos dirigidos y no dirigidos.
+ *
+ * Complejidad espacial: O(V²)
+ * Consultar arista: O(1)
+ * Listar vecinos: O(V)
+ */
+public class GrafoMatriz {
+
+    private final int[][] adyacencia;
+    private final int numVertices;
+    private final boolean dirigido;
+
+    private static final int SIN_ARISTA = 0;
+
+    /**
+     * Crea un grafo con el número de vértices indicado.
+     *
+     * @param numVertices número total de vértices (0 a numVertices - 1)
+     * @param dirigido    true si el grafo es dirigido
+     */
+    public GrafoMatriz(int numVertices, boolean dirigido) {
+        if (numVertices <= 0) {
+            throw new IllegalArgumentException("El número de vértices debe ser positivo");
+        }
+        this.numVertices = numVertices;
+        this.dirigido = dirigido;
+        this.adyacencia = new int[numVertices][numVertices];
+    }
+
+    /**
+     * Añade una arista con peso entre dos vértices.
+     * En grafos no dirigidos, la arista se añade en ambas direcciones.
+     *
+     * @param origen  vértice origen (0-indexed)
+     * @param destino vértice destino (0-indexed)
+     * @param peso    peso de la arista (debe ser distinto de SIN_ARISTA)
+     */
+    public void agregarArista(int origen, int destino, int peso) {
+        validarVertice(origen);
+        validarVertice(destino);
+        if (peso == SIN_ARISTA) {
+            throw new IllegalArgumentException("El peso no puede ser " + SIN_ARISTA);
+        }
+        adyacencia[origen][destino] = peso;
+        if (!dirigido) {
+            adyacencia[destino][origen] = peso;
+        }
+    }
+
+    /**
+     * Comprueba si existe una arista entre dos vértices.
+     *
+     * @return true si hay arista de origen a destino
+     */
+    public boolean existeArista(int origen, int destino) {
+        validarVertice(origen);
+        validarVertice(destino);
+        return adyacencia[origen][destino] != SIN_ARISTA;
+    }
+
+    /**
+     * Obtiene el peso de la arista entre dos vértices.
+     *
+     * @return peso de la arista, o SIN_ARISTA si no existe
+     */
+    public int obtenerPeso(int origen, int destino) {
+        validarVertice(origen);
+        validarVertice(destino);
+        return adyacencia[origen][destino];
+    }
+
+    /**
+     * Devuelve el grado del vértice (número de aristas incidentes).
+     * En grafos dirigidos, devuelve el grado de salida.
+     */
+    public int grado(int vertice) {
+        validarVertice(vertice);
+        int cuenta = 0;
+        for (int j = 0; j < numVertices; j++) {
+            if (adyacencia[vertice][j] != SIN_ARISTA) {
+                cuenta++;
+            }
+        }
+        return cuenta;
+    }
+
+    /**
+     * Imprime la matriz de adyacencia en formato tabular.
+     */
+    public void imprimirMatriz() {
+        System.out.print("    ");
+        for (int j = 0; j < numVertices; j++) {
+            System.out.printf("%4d", j);
+        }
+        System.out.println();
+        System.out.println("    " + "----".repeat(numVertices));
+        for (int i = 0; i < numVertices; i++) {
+            System.out.printf("%2d |", i);
+            for (int j = 0; j < numVertices; j++) {
+                System.out.printf("%4d", adyacencia[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    public int getNumVertices() {
+        return numVertices;
+    }
+
+    public int[][] getAdyacencia() {
+        return adyacencia;
+    }
+
+    private void validarVertice(int v) {
+        if (v < 0 || v >= numVertices) {
+            throw new IllegalArgumentException(
+                "Vértice " + v + " fuera de rango [0, " + (numVertices - 1) + "]"
+            );
+        }
+    }
+
+    // --- Ejemplo de uso ---
+    public static void main(String[] args) {
+        // Grafo no dirigido valorado con 5 nodos
+        GrafoMatriz grafo = new GrafoMatriz(5, false);
+
+        grafo.agregarArista(0, 1, 10);
+        grafo.agregarArista(0, 3, 30);
+        grafo.agregarArista(0, 4, 100);
+        grafo.agregarArista(1, 2, 50);
+        grafo.agregarArista(2, 4, 10);
+        grafo.agregarArista(3, 2, 20);
+        grafo.agregarArista(3, 4, 60);
+
+        System.out.println("=== Matriz de adyacencia ===");
+        grafo.imprimirMatriz();
+
+        System.out.println("\n¿Existe arista 0→2? " + grafo.existeArista(0, 2));
+        System.out.println("¿Existe arista 0→1? " + grafo.existeArista(0, 1));
+        System.out.println("Peso arista 1→2: " + grafo.obtenerPeso(1, 2));
+        System.out.println("Grado del nodo 0: " + grafo.grado(0));
+    }
+}
